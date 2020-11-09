@@ -22,6 +22,11 @@ const Player = ({ currentSong, isPlaying, setIsPlaying }) => {
   const timeUpdateHandler = (e) => {
     const current = e.target.currentTime;
     const duration = e.target.duration;
+
+    // Fix: If user changes song and prev song was playing, keep this state, to play the next one automatically.
+    if (isPlaying) {
+      audioRef.current.play();
+    }
     setSongInfo({ ...songInfo, currentTime: current, duration });
   };
 
@@ -48,7 +53,7 @@ const Player = ({ currentSong, isPlaying, setIsPlaying }) => {
         <input
           type="range"
           min={0}
-          max={songInfo.duration}
+          max={songInfo.duration || 0}
           value={songInfo.currentTime}
           onChange={dragHandler}
         />
