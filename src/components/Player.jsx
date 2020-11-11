@@ -36,20 +36,21 @@ const Player = ({
     setSongInfo({ ...songInfo, currentTime: e.target.value });
   };
 
-  const skipTrackHandler = (direction) => {
+  const skipTrackHandler = async (direction) => {
     const currentIndex = songs.findIndex((song) => song.id === currentSong.id);
     if (direction === "skip-back") {
-      setCurrentSong(songs[(songs.length - 1 + currentIndex) % songs.length]);
+      await setCurrentSong(
+        songs[(songs.length - 1 + currentIndex) % songs.length]
+      );
     }
     if (direction === "skip-forward") {
-      setCurrentSong(songs[(currentIndex + 1) % songs.length]);
+      await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
     }
   };
 
   const timeUpdateHandler = (e) => {
     const current = e.target.currentTime;
     const duration = e.target.duration;
-
     const roundedCurrent = Math.round(current);
     const roundedDuration = Math.round(duration);
     const animationPercent = Math.round(
@@ -77,6 +78,13 @@ const Player = ({
       audioRef && audioRef.current.play();
       setIsPlaying(true);
     }
+  };
+
+  const endSongHandler = async () => {
+    const currentIndex = songs.findIndex((song) => song.id === currentSong.id);
+    await setCurrentSong(
+      songs[(songs.length - 1 + currentIndex) % songs.length]
+    );
   };
 
   const getTime = (time) => {
@@ -136,6 +144,7 @@ const Player = ({
         src={currentSong.audio}
         onLoadedMetadata={timeUpdateHandler}
         onTimeUpdate={timeUpdateHandler}
+        onEnded={endSongHandler}
       ></audio>
     </div>
   );
