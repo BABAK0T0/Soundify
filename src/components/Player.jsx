@@ -19,6 +19,7 @@ const Player = ({
   const [songInfo, setSongInfo] = useState({
     currentTime: 0,
     duration: 0,
+    animationPercent: 0,
   });
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const Player = ({
   }, [currentSong, setSongs]);
 
   const dragHandler = (e) => {
-    audioRef.current.currentTime = e.target.value;
+    audioRef.current.currentTime = e.target.value; // Link input value to song value
     setSongInfo({ ...songInfo, currentTime: e.target.value });
   };
 
@@ -49,12 +50,23 @@ const Player = ({
     const current = e.target.currentTime;
     const duration = e.target.duration;
 
+    const roundedCurrent = Math.round(current);
+    const roundedDuration = Math.round(duration);
+    const animationPercent = Math.round(
+      (roundedCurrent / roundedDuration) * 100
+    );
+
     // Fix: If user changes song and prev song was playing, keep this state, to play the next one automatically.
     if (isPlaying) {
       audioRef.current.play();
     }
 
-    setSongInfo({ ...songInfo, currentTime: current, duration });
+    setSongInfo({
+      ...songInfo,
+      currentTime: current,
+      duration,
+      animationPercent,
+    });
   };
 
   const playSongHandler = () => {
@@ -73,17 +85,30 @@ const Player = ({
     );
   };
 
+  const trackAnim = {
+    transform: `translateX(${songInfo.animationPercent}%)`,
+  };
+
   return (
     <div className="player-container">
       <div className="time-control">
         <p>{getTime(songInfo.currentTime)}</p>
-        <input
-          type="range"
-          min={0}
-          max={songInfo.duration || 0}
-          value={songInfo.currentTime}
-          onChange={dragHandler}
-        />
+        <div
+          style={{
+            background: `linear-gradient(to right, ${currentSong.color[0]}, ${currentSong.color[1]}
+            )`,
+          }}
+          className="track"
+        >
+          <input
+            type="range"
+            min={0}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            onChange={dragHandler}
+          />
+          <div style={trackAnim} className="animate-track"></div>
+        </div>
         <p>{songInfo.duration ? getTime(songInfo.duration) : getTime(0)}</p>
       </div>
       <div className="play-control">
