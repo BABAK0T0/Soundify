@@ -58,8 +58,14 @@ const Player = ({
     );
 
     // Fix: If user changes song and prev song was playing, keep this state, to play the next one automatically.
+    // https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
     if (isPlaying) {
-      audioRef.current.play();
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.then((audio) => {
+          audioRef.current.play();
+        });
+      }
     }
 
     setSongInfo({
