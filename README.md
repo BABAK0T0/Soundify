@@ -6,7 +6,7 @@ In the project directory, you can run:
 
 ### `yarn run install`
 
-Then
+Then the following command
 
 ### `yarn run start`
 
