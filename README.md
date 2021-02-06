@@ -1,6 +1,6 @@
 # SOUNDIFY
 
-Player audio made with [https://reactjs.org/](React.JS)
+Player audio made with [React.JS](https://reactjs.org/)
 
 In the project directory, you can run:
 
